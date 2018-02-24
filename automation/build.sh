@@ -7,6 +7,7 @@ set -o pipefail   # don't ignore exit codes when piping output
 set -x            # enable debugging
 
 ##
+APP_NAME=nodejs-docs-hello-world
 
 # Resolve paths to our output directories
 # Where do we store the build output?
