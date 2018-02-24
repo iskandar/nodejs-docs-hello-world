@@ -8,6 +8,10 @@ var server = http.createServer(function(request, response) {
 });
 
 var port = process.env.PORT || 1337;
+
+// Dump ALL of the environment vars
+console.log("env config", process.env);
+
 server.listen(port);
 
 console.log("Server running at http://localhost:%d", port);
