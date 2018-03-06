@@ -52,10 +52,10 @@ echo "----> Generating license info..."
 yarn licenses list > ${DIST_DIR}/licenses.txt
 yarn licenses generate-disclaimer > ${DIST_DIR}/license-disclaimer.txt
 
-echo "----> Copying specific files to our dist dir..."
-cp -a ./process.json ${DIST_DIR}/
-cp -a ./package.json ${DIST_DIR}/
-cp -a ./index.js ${DIST_DIR}/
+echo "----> Copying files to our dist dir..."
+cp -a ./*.json ${DIST_DIR}/
+cp -a ./*.js ${DIST_DIR}/
+cp -a ./*.config ${DIST_DIR}/
 
 echo "----> Updating the VERSION file to '${APP_VERSION}'..."
 echo $APP_VERSION > ${DIST_DIR}/VERSION
