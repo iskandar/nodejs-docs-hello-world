@@ -5,9 +5,12 @@ var properties = require("properties");
 var buildProperties = { oops: "not found" };
 properties.parse("build.properties", { path: true }, startServer);
 
-function startServer(error, props) {
+function startServer(error, buildProperties) {
     if (error) return console.error(error);
-    buildProperties = props;
+    
+    // Dump our build and run-time variables
+    console.log("build properties", buildProperties);
+    console.log("env config", process.env);
 
     var server = http.createServer(function (request, response) {
 
@@ -21,9 +24,6 @@ function startServer(error, props) {
     });
 
     var port = process.env.PORT || 1337;
-
-    // Dump ALL of the environment vars
-    console.log("env config", process.env);
 
     server.listen(port);
 
