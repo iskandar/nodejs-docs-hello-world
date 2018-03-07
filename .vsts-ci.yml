@@ -1,27 +1,19 @@
 #
 
-resources:
-  - repo: self
-    fetchDepth: 1
-    
 queue:
   name: Hosted Linux Preview
   demands: 
     - npm
     - sh
 
-variables:
-  # @TODO make this a secret somewhere?
-  Slack.APIToken: 'xoxp-7948929941-13705986309-56191542946-42d7d4e995'
-
 steps:
 
-  # - task: louisgerard.slackposter.slackposterbuild.SlackPoster@0
-  #   inputs:
-  #     UserName: 'VSTS'
-  #     Message: 'Hello World JS build $(Build.BuildID) started'
-  #     ApiToken: '$(Slack.APIToken)'
-  #     Channel: '#rdps-0000-firehose'
+  - task: louisgerard.slackposter.slackposterbuild.SlackPoster@0
+    inputs:
+      UserName: 'VSTS'
+      Message: 'Hello World JS build $(Build.BuildID) started'
+      ApiToken: '$(Slack.APIToken)'
+      Channel: '#rdps-0000-firehose'
         
   - task: Npm@1
     inputs:
@@ -48,9 +40,9 @@ steps:
       ArtifactName: drop
       ArtifactType: Container
 
-  # - task: louisgerard.slackposter.slackposterbuild.SlackPoster@0
-  #   inputs:
-  #     UserName: 'VSTS'
-  #     Message: 'Hello World JS build $(Build.BuildID) finished'
-  #     ApiToken: '$(Slack.APIToken)'
-  #     Channel: '#rdps-0000-firehose'
+  - task: louisgerard.slackposter.slackposterbuild.SlackPoster@0
+    inputs:
+      UserName: 'VSTS'
+      Message: 'Hello World JS build $(Build.BuildID) finished'
+      ApiToken: '$(Slack.APIToken)'
+      Channel: '#rdps-0000-firehose'
