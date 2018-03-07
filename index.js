@@ -1,9 +1,9 @@
 
 // Set up App Insights first
-const appInsights = require("applicationinsights");
+var appInsights = require("applicationinsights");
 appInsights.setup(process.env.AI_INSTRUMENTATION_KEY ? process.env.AI_INSTRUMENTATION_KEY : 'none');
 appInsights.start();
-let aiClient = appInsights.defaultClient;
+var aiClient = appInsights.defaultClient;
 appInsights.defaultClient.commonProperties = {
     environment: process.env.ENVIRONMENT,
     nodeEnv: process.env.NODE_ENV,
