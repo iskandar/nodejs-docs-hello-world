@@ -24,7 +24,7 @@ function startServer(error, buildProperties) {
     console.log("env config", process.env);
 
     var server = http.createServer(function (request, response) {
-        aiClient.trackNodeHttpRequest({request: req, response: res}); 
+        aiClient.trackNodeHttpRequest({request: request, response: response}); 
         response.writeHead(200, { "Content-Type": "text/html" });
         response.write("<h1>Hello World!</h1>");
         response.write("<h2>Build Properties</h2>");
