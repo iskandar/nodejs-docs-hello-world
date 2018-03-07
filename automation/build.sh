@@ -56,6 +56,7 @@ echo "----> Copying files to our dist dir..."
 cp -a ./*.json ${DIST_DIR}/
 cp -a ./*.js ${DIST_DIR}/
 cp -a ./*.config ${DIST_DIR}/
+cp -a ./node_modules ${DIST_DIR}/
 
 echo "----> Updating the VERSION file to '${APP_VERSION}'..."
 echo $APP_VERSION > ${DIST_DIR}/VERSION
