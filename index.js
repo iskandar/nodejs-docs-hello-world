@@ -1,9 +1,8 @@
 var http = require('http');
-var _ = require('lodash');
-var properties = require("properties");
+var properties = require ("properties-parser");
 
-var buildProperties = { oops: "not found" };
-properties.parse("build.properties", { path: true }, startServer);
+// Read our build properties file
+var buildProperties = properties.read("build.properties");
 
 function startServer(error, buildProperties) {
     if (error) return console.error(error);
@@ -13,7 +12,6 @@ function startServer(error, buildProperties) {
     console.log("env config", process.env);
 
     var server = http.createServer(function (request, response) {
-
         response.writeHead(200, { "Content-Type": "text/html" });
         response.write("<h1>Hello World!</h1>");
         response.write("<h2>Build Properties</h2>");
@@ -29,3 +27,5 @@ function startServer(error, buildProperties) {
 
     console.log("Server running at http://localhost:%d", port);
 }
+
+startServer(null, buildProperties);
