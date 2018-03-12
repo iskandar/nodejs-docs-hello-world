@@ -53,6 +53,7 @@ yarn licenses list > ${DIST_DIR}/licenses.txt
 yarn licenses generate-disclaimer > ${DIST_DIR}/license-disclaimer.txt
 
 echo "----> Copying files to our dist dir..."
+# This might be better accomplished via a gulp task or similar.
 cp -a ./*.json ${DIST_DIR}/
 cp -a ./*.js ${DIST_DIR}/
 cp -a ./*.config ${DIST_DIR}/

@@ -1,15 +1,4 @@
 
-// Set up App Insights first
-// var appInsights = require("applicationinsights");
-// appInsights.setup(process.env.AI_INSTRUMENTATION_KEY ? process.env.AI_INSTRUMENTATION_KEY : 'none');
-// appInsights.start();
-// var aiClient = appInsights.defaultClient;
-// appInsights.defaultClient.commonProperties = {
-//     environment: process.env.ENVIRONMENT,
-//     nodeEnv: process.env.NODE_ENV,
-//     siteName: process.env.WEBSITE_IIS_SITE_NAME
-// };
-
 var http = require('http');
 var properties = require ("properties-parser");
 
@@ -24,7 +13,6 @@ function startServer(error, buildProperties) {
     console.log("env config", process.env);
 
     var server = http.createServer(function (request, response) {
-        // aiClient.trackNodeHttpRequest({request: request, response: response}); 
         response.writeHead(200, { "Content-Type": "text/html" });
         response.write("<h1>Hello World!</h1>");
         response.write("<h2>Build Properties</h2>");

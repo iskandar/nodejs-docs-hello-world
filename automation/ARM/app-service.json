@@ -1,0 +1,227 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40
+    },
+    "namespace": {
+      "metadata": {
+        "description": "The namespace for the resources - globally unique"
+      },
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 12,
+      "defaultValue": "dx12"
+    },
+    "environment": {
+      "metadata": {
+        "description": "The Environment name"
+      },
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 16,
+      "defaultValue": "Production"
+    },
+    "skuPricingTierSize": {
+      "type": "string",
+      "defaultValue": "S1",
+      "allowedValues": [
+        "F1",
+        "D1",
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1v2",
+        "P2v2",
+        "P3v2",
+        "I1",
+        "I2",
+        "I3"
+      ],
+      "metadata": {
+        "description": "Describes plan's pricing tier and capacity. Check details at https://docs.microsoft.com/en-us/azure/app-service/azure-web-sites-web-hosting-plans-in-depth-overview"
+      }
+    },
+    "buildDate": {
+      "type": "string",
+      "metadata": {
+        "description": "The date of this build"
+      },
+      "defaultValue": "01/01/2999"
+    },
+    "buildBy": {
+      "type": "string",
+      "metadata": {
+        "description": "The e-mail address of the person who build this environment"
+      },
+      "defaultValue": "first.last@domain.com"
+    },
+    "customTagsObject": {
+      "type": "object",
+      "metadata": {
+        "description": "Resource Tags to apply to this object."
+      },
+      "defaultValue": {
+        "tags": {}
+      }
+    }
+  },
+  "variables": {
+    "RackspaceTags": {
+      "displayName": "App Service Plan",
+      "Environment": "[parameters('environment')]",
+      "BuildDate": "[parameters('buildDate')]",
+      "BuildBy": "[parameters('buildBy')]"
+    },
+    "appNameInfix": "[concat(parameters('namespace'), '-', parameters('appName'))]",
+    "farmNameInfix": "[concat(parameters('namespace'), '-farm')]",
+    "resourceTags": "[union(variables('RackspaceTags'), parameters('customTagsObject').tags)]",
+    "clientAffinityEnabled": false,
+    "skuTier": {
+      "F1": "Free",
+      "D1": "Shared",
+      "B1": "Basic",
+      "B2": "Basic",
+      "B3": "Basic",
+      "S1": "Standard",
+      "S2": "Standard",
+      "S3": "Standard",
+      "P1v2": "Premium",
+      "P2v2": "Premium",
+      "P3v2": "Premium",
+      "I1": "Isolated",
+      "I2": "Isolated",
+      "I3": "Isolated"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2016-09-01",
+      "name": "[variables('farmNameInfix')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[resourceGroup().location]",
+      "tags": "[variables('resourceTags')]",
+      "properties": {
+        "name": "[variables('farmNameInfix')]",
+        "workerSizeId": "1",
+        "reserved": false,
+        "numberOfWorkers": "1"
+      },
+      "sku": {
+        "name": "[parameters('skuPricingTierSize')]",
+        "tier": "[variables('skuTier')[parameters('skuPricingTierSize')]]"
+      }
+    },
+    {
+      "apiVersion": "2016-08-01",
+      "type": "Microsoft.Web/sites",
+      "kind": "app",
+      "name": "[variables('appNameInfix')]",
+      "location": "[resourceGroup().location]",
+      "comments": "This is the web app, also the default 'nameless' slot.",
+      "tags": {
+        "displayName": "[variables('appNameInfix')]"
+      },
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('farmNameInfix'))]",
+        "clientAffinityEnabled": "[variables('clientAffinityEnabled')]",
+        "siteConfig": {
+          "alwaysOn": true,
+          "nodeVersion": "8.9.4",
+          "webSocketsEnabled": true,
+          "requestTracingEnabled": true,
+          "remoteDebuggingEnabled": true,
+          "httpLoggingEnabled": true,
+          "logsDirectorySizeLimit": 35,
+          "detailedErrorLoggingEnabled": true,
+          "appSettings": [
+            {
+              "name": "setting0",
+              "value": "value0"
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('farmNameInfix'))]"
+      ],
+      "resources": [
+        {
+          "name": "appsettings",
+          "type": "config",
+          "apiVersion": "2016-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', variables('appNameInfix'))]"
+          ],
+          "tags": {
+            "displayName": "WebAppSettings"
+          },
+          "properties": {
+            "key1": "value1",
+            "key2": "value2"
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "2016-08-01",
+      "type": "Microsoft.Web/sites/slots",
+      "name": "[concat(variables('appNameInfix'), '/preprod')]",
+      "kind": "app",
+      "location": "[resourceGroup().location]",
+      "comments": "Preprod Slot",
+      "tags": {
+        "displayName": "PreProd"
+      },
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('farmNameInfix'))]",
+        "siteConfig": {
+          "alwaysOn": true,
+          "nodeVersion": "8.9.4",
+          "webSocketsEnabled": true,
+          "requestTracingEnabled": true,
+          "remoteDebuggingEnabled": true,
+          "httpLoggingEnabled": true,
+          "logsDirectorySizeLimit": 35,
+          "detailedErrorLoggingEnabled": true,
+          "appSettings": [
+            {
+              "name": "setting0",
+              "value": "value0"
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/Sites', variables('appNameInfix'))]"
+      ],
+      "resources": [
+        {
+          "name": "appsettings",
+          "type": "config",
+          "apiVersion": "2016-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', variables('appNameInfix'), '/slots/preprod')]"
+          ],
+          "tags": {
+            "displayName": "WebAppSettings"
+          },
+          "properties": {
+            "key3": "value3",
+            "key4": "value4"
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": {}
+}
